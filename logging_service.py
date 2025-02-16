@@ -10,6 +10,8 @@ async def store_log(request: Request):
     msg = body.get("msg")
     if not log_id or not msg:
         return {"message": "Invalid request format"}
+    if log_id in logs:
+        return { "message": "Message already logged"}
     logs[log_id] = msg
     return {"status": "logged", "id": log_id}
 
