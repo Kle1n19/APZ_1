@@ -78,6 +78,29 @@ curl -X 'GET' 'http://127.0.0.1:8000/fetch'
 
 - **Retry Mechanism**: Retries failed requests to `logging-service` up to **3 times**.
 - **Deduplication**: Prevents duplicate messages in the logging service.
+### Check additional task
+#### Retry
+- Only start `facade-service`
+- Do not start the `logging-service`
+- After some
+  ```sh
+  curl -X 'POST' 'http://127.0.0.1:8000/send' \
+  -H 'Content-Type: application/json' \
+  -d '{"msg": "Retry Test Message"}'
+  ```
+  you should get this(in facade_service console):
+  ```sh
+  One more try
+  One more try
+  One more try
+  ```
+#### Deduplication
+Ensures that duplicate messages with the same UUID are not stored multiple times in the logging-service
+I did it like that:
+```python
+if log_id in logs:
+        return { "message": "Message already logged"}
+```
 
 ---
 
@@ -88,8 +111,4 @@ curl -X 'GET' 'http://127.0.0.1:8000/fetch'
 - Logs are stored in memory, so restarting `logging-service` will reset stored logs.
 
 ---
-
-## Author
-
-Developed for **Microservices Basics Task**.
 
