@@ -3,11 +3,12 @@ import hazelcast
 import os
 import signal
 import subprocess
+import sys
 from contextlib import asynccontextmanager
 
-HAZELCAST_PATH = "/Users/petroprokopetz/Downloads/hazelcast-5.5.0/bin/hz"
 app = FastAPI()
 
+HAZELCAST_PATH = "/Users/petroprokopets/Downloads/hazelcast-5.5.0/bin/hz"
 hz_client = None
 hz_process = None
 log_map = None
@@ -26,7 +27,6 @@ def stop_node():
         print("Hazelcast node stopped.")
         hz_process = None
 
-#Заміна on_event яка повністю скопійована з документаціїї оскільки on_event уже застарілий
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global hz_client, log_map
@@ -50,6 +50,7 @@ async def store_log(request: Request):
     if log_map.contains_key(log_id):
         return {"message": "Message already logged"}
     log_map.put(log_id, msg)
+    print(f"Stored message: {log_id} - {msg}")
     return {"status": "logged", "id": log_id}
 
 @app.get("/log")
